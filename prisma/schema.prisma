@@ -1,8 +1,77 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["clientExtensions"]
+}
+
+generator typegraphql {
+  provider                  = "typegraphql-prisma"
+  useSimpleInputs           = true
+  omitInputFieldsByDefault  = "emoji"
+  omitOutputFieldsByDefault = "password"
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+/// User roles
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  /// User ID (UUID v4)
+  /// @TypeGraphQL.omit(input: ["create", "update", "orderBy"])
+  id        String   @id @default(uuid()) @map("_id")
+  /// @TypeGraphQL.field(description: "name")
+  name      String   @unique
+  email     String   @unique
+  /// @TypeGraphQL.omit(input: ["where", "orderBy"])
+  password  String
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  role      Role     @default(USER)
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  createdAt DateTime @default(now())
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  items     Item[]
+}
+
+model Country {
+  /// @TypeGraphQL.omit(input: ["update"])
+  id    String  @id @map("_id") @default("UN")
+  name  String  @unique
+  emoji String?
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  items Item[]
+}
+
+model Type {
+  /// @TypeGraphQL.omit(input: ["create", "update", "orderBy"])
+  id    String @id @default(uuid()) @map("_id")
+  name  String @unique
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  items Item[]
+}
+
+model Item {
+  /// @TypeGraphQL.omit(input: ["create", "update", "orderBy"])
+  id        String   @id @default(uuid()) @map("_id")
+  name      String   @unique
+  strength  Float?   @default(0)
+  /// @TypeGraphQL.omit(input: ["orderBy"])
+  typeId    String?  @default("0")
+  type      Type?    @relation(fields: [typeId], references: [id])
+  countryId String?  @default("UN")
+  country   Country? @relation(fields: [countryId], references: [id])
+  /// @TypeGraphQL.omit(input: ["orderBy"])
+  userId    String?  @default("0")
+  user      User?    @relation(fields: [userId], references: [id])
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  createdAt DateTime @default(now())
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  updatedAt DateTime @updatedAt
 }
