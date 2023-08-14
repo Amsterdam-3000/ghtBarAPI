@@ -1,0 +1,13 @@
+POST localhost:3000/graphql
+Content-Type: application/json
+#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNiMzRkMTJhLTVkYTQtNDE4Yi05NGRhLWI2MWY3ZDEzNTgxNCIsIm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHQucnUiLCJyb2xlIjoiVVNFUiIsImNyZWF0ZWRBdCI6IjIwMjMtMDYtMjNUMTg6NDk6NTkuNjkzWiIsInVwZGF0ZWRBdCI6IjIwMjMtMDYtMjNUMTg6NDk6NTkuNjkzWiIsImlhdCI6MTY4Nzc4MTU3OCwiZXhwIjoxNjg3Nzg1MTc4fQ.pbyVwXLDeRwRat4dUUlKqd4th-jZXhCX0nDA8-aUJCE
+
+{
+  "query": "query ExampleQuery($where: UserWhereUniqueInput!) {\n  getUser(where: $where) {\n    id\n name\n \n   }\n}\n",
+  "variables": {
+    "where": {
+      "name": "ght"
+    }
+  },
+  "operationName": "ExampleQuery"
+}

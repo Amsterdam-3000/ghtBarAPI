@@ -1,41 +1,45 @@
+import { NextFunction, Request, Response } from 'express';
+import * as useragent from 'express-useragent';
+import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 
 import { AppModule } from './app/app.module';
-import { prisma } from './prisma/prisma.service';
-import { jwtStrategy } from './auth/jwt.strategy';
+import { LoggerService } from './logger/logger.service';
+import { extendPrisma, initPrisma } from './prisma/prisma';
+import { MinioClient } from './minio/minio.client';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
-  app.useGlobalPipes(new ValidationPipe());
-  app.enableCors();
+  const config = app.get(ConfigService);
+  const logger = new LoggerService('Main');
 
+  app.useLogger(logger);
+  app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({
+    origin: config.get<string>('CORS_ORIGIN'),
+  });
+
+  app.use(useragent.express());
   app.use(
     //TODO Install new 16th version (Nest doesn't support ES modules yet)
-    graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 20 }),
+    graphqlUploadExpress({
+      maxFileSize: config.get<number>('IMAGE_UPLOAD_MAX_SIZE'),
+      maxFiles: config.get<number>('IMAGE_UPLOAD_MAX_FILES'),
+    }),
   );
-
-  //TODO Change to PrismaServisce (TypeGraphQL Prisma assign prisma to req)
-  app.use(async (req, res, next) => {
-    req.prisma = prisma;
+  //TODO Change to PrismaService (TypeGraphQL Prisma assign prisma to req)
+  app.use(async (req: Request, res: Response, next: NextFunction) => {
+    const logger = new LoggerService('Prisma').setReq(req);
+    const minio = new MinioClient(config, logger);
+    const prisma = initPrisma(logger);
+    req.prisma = extendPrisma(prisma, minio, config, logger);
     await next();
   });
 
-  //TODO Change to AuthGuard('jwt') (TypeGraphQL doesn't support guards)
-  app.use('/graphql', (req, res, next) =>
-    jwtStrategy.authenticate(async (user) => {
-      req.user = user;
-      await next();
-    })(req, res, next),
-  );
-
-  await app.listen(configService.get('PORT'));
-  console.log(
-    `Application is running and Apollo sandbox is available on: ${await app.getUrl()}/graphql`,
-  );
+  await app.listen(config.get<number>('PORT'));
+  logger.log(`Apollo Server is available on: ${await app.getUrl()}/graphql`);
 }
 
 bootstrap().catch((err) => {

@@ -1,37 +1,31 @@
-import { Module } from '@nestjs/common';
-import { ApolloDriver } from '@nestjs/apollo';
+import { APP_GUARD } from '@nestjs/core';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeGraphQLModule } from 'typegraphql-nestjs';
 
-import { authChecker } from '../auth/auth.checker';
-import { IAppContext } from './app.model';
+import { ThrottlerModule } from '../throttler/throttler.module';
+import { ThrottlerGuard } from '../throttler/throttler.guard';
+import { ThrottlerMiddleware } from '../throttler/throttler.middleware';
 import { AuthModule } from '../auth/auth.module';
+import { AuthMiddleware } from '../auth/auth.middleware';
 import { GraphqlModule } from '../graphql/graphql.module';
+import { LoggerModule } from '../logger/logger.module';
+import { LoggerMiddleware } from '../logger/logger.middleware';
+import { configSchema } from '../config/config.schema';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeGraphQLModule.forRootAsync({
-      driver: ApolloDriver,
-      useFactory: async () => ({
-        emitSchemaFile: true,
-        validate: true,
-        playground: false,
-        authChecker: authChecker,
-        context: ({ req }): IAppContext => ({
-          prisma: req.prisma,
-          user: req.user,
-        }),
-        plugins: [
-          //TODO Convert project to ES modules (Nest doesn't support ES modules yet)
-          (
-            await import('@apollo/server/plugin/landingPage/default')
-          ).ApolloServerPluginLandingPageLocalDefault(),
-        ],
-      }),
-      imports: [GraphqlModule],
-    }),
+    LoggerModule,
+    ConfigModule.forRoot({ isGlobal: true, validationSchema: configSchema }),
+    ThrottlerModule,
     AuthModule,
+    GraphqlModule,
   ],
+  providers: [{ provide: APP_GUARD, useExisting: ThrottlerGuard }],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('/*');
+    //TODO Change to Nest Auth Guard (TypeGraphQL doesn't support Guards yet)
+    consumer.apply(ThrottlerMiddleware, AuthMiddleware).forRoutes('graphql');
+  }
+}

@@ -1,6 +1,5 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["clientExtensions"]
 }
 
 generator typegraphql {
@@ -42,7 +41,7 @@ model User {
 
 model Country {
   /// @TypeGraphQL.omit(input: ["update"])
-  id    String  @id @map("_id") @default("UN")
+  id    String  @id @map("_id")
   name  String  @unique
   emoji String?
   /// @TypeGraphQL.omit(input: ["create", "update"])

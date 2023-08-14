@@ -1,25 +1,32 @@
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
+import { LoggerService } from '../logger/logger.service';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { LocalStrategy } from './local.strategy';
-
-//TODO Change to JwtModule.registerAsync
-const getJwtModule = async () => {
-  await ConfigModule.envVariablesLoaded;
-  return JwtModule.register({
-    secret: process.env.JWT_SECRET,
-    signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
-  });
-};
+import { AuthLocalStrategy } from './auth.local.strategy';
+import { AuthJwtStrategy } from './auth.jwt.strategy';
+import { AuthJwtGuard } from './auth.jwt.guard';
 
 @Module({
-  imports: [PassportModule, getJwtModule()],
-  providers: [AuthService, LocalStrategy],
-  exports: [AuthService],
+  imports: [
+    JwtModule.registerAsync({
+      useFactory: async (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: config.get<string>('JWT_EXPIRES_IN') },
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [
+    LoggerService,
+    AuthService,
+    AuthLocalStrategy,
+    AuthJwtStrategy,
+    AuthJwtGuard,
+  ],
+  exports: [AuthService, AuthJwtGuard],
   controllers: [AuthController],
 })
 export class AuthModule {}

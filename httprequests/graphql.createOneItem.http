@@ -1,0 +1,13 @@
+POST localhost:3000/graphql
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNiMzRkMTJhLTVkYTQtNDE4Yi05NGRhLWI2MWY3ZDEzNTgxNCIsIm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHQucnUiLCJyb2xlIjoiVVNFUiIsImNyZWF0ZWRBdCI6IjIwMjMtMDYtMjNUMTg6NDk6NTkuNjkzWiIsInVwZGF0ZWRBdCI6IjIwMjMtMDYtMjNUMTg6NDk6NTkuNjkzWiIsImlhdCI6MTY4NzU0NjIwOSwiZXhwIjoxNjg3NTQ5ODA5fQ.BWn-zdCgxmwa-QfEQC6vfowCMJI0VotsR48UoNBR3Cw
+
+{
+  "query": "mutation Mutation($data: ItemCreateInput!) {\n  createOneItem(data: $data) {\n    name\n  }\n}\n",
+  "variables": {
+    "data": {
+      "name": "1111"
+    }
+  },
+  "operationName": "Mutation"
+}

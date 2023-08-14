@@ -42,5 +42,6 @@ lerna-debug.log*
 .env.local
 
 # misc
-/migrations/**/*
+/jsmigrations/data/
+/jsmigrations/images
 

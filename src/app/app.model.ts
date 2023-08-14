@@ -1,7 +1,10 @@
+import { Request } from 'express';
 import { User } from '@prisma/client';
-import { PrismaClient } from '../prisma/prisma.service';
+
+import { PrismaClientExtended } from '../prisma/prisma';
 
 export interface IAppContext {
-  prisma: PrismaClient;
+  prisma: PrismaClientExtended;
   user: User;
+  req: Request;
 }

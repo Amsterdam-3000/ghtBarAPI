@@ -70,7 +70,7 @@ input CountryCreateOrConnectWithoutItemsInput {
 }
 
 input CountryCreateWithoutItemsInput {
-  id: String
+  id: String!
   name: String!
 }
 
