@@ -42,7 +42,7 @@ export class LoggerService extends ConsoleLogger {
     if (!this.req) return;
     const message = this.getReqMessage();
     const args = context ? [message, context] : [message];
-    this.verbose.call(this, ...args);
+    super.verbose.call(this, ...args);
   }
 
   log(message: string, context?: string) {
