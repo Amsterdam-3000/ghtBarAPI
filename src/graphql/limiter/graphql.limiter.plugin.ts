@@ -5,12 +5,6 @@ import {
   simpleEstimator,
 } from 'graphql-query-complexity';
 import * as depthLimit from 'graphql-depth-limit';
-//TODO Remove dependency apollo-server-plugin-base
-// import {
-// ApolloServerPlugin,
-// GraphQLRequestContext,
-// GraphQLRequestListener,
-// } from 'apollo-server-plugin-base';
 import {
   ApolloServerPlugin,
   GraphQLRequestContext,
