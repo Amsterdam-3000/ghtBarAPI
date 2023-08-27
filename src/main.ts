@@ -35,7 +35,7 @@ async function bootstrap() {
     const minio = new MinioClient(config, logger);
     const prisma = initPrisma(logger);
     req.prisma = extendPrisma(prisma, minio, config, logger);
-    await next();
+    next();
   });
 
   await app.listen(config.get<number>('PORT'));

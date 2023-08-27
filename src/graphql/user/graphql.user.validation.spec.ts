@@ -90,9 +90,9 @@ const createUser = { create: validUser };
 const connectOrCreateUser = {
   connectOrCreate: { where: uniqueUser, create: validUser },
 };
-const deleteUser = { delete: true };
-const updateUser = { update: validUser };
-const upsertUser = { create: validUser, update: validUser };
+const deleteUser = { delete: { name: { equals: 'user' } } };
+const updateUser = { update: { data: validUser } };
+const upsertUser = { create: validUser, update: { data: validUser } };
 
 const getItemQueryUserVars = (query: string, data1: object, data2?: object) => {
   const itemData = { name: 'item', user: data1 };

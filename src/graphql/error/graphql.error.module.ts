@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { LoggerService } from '../../logger/logger.service';
 import { GraphqlErrorFormatter } from './graphql.error.formatter';
 
 @Module({
   imports: [],
-  providers: [GraphqlErrorFormatter, LoggerService],
+  providers: [GraphqlErrorFormatter],
   exports: [GraphqlErrorFormatter],
 })
 export class GraphqlErrorModule {}

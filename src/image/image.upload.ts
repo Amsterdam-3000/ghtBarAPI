@@ -8,7 +8,10 @@ export interface IImageUpload {
 }
 
 export class ImageUpload {
-  constructor(private image: IImageUpload, private logger: LoggerService) {}
+  constructor(
+    private image: IImageUpload,
+    private logger: LoggerService,
+  ) {}
 
   public uploadOrThrow = async (): Promise<void> => {
     this.logger.log('Checking uploaded image', ImageUpload.name);
@@ -25,7 +28,7 @@ export class ImageUpload {
     } catch (error) {
       throw new Error('Image upload error.');
     }
-    if (!this.image.mimetype || !this.image.mimetype.startsWith('image/')) {
+    if (!this.image.mimetype?.startsWith('image/')) {
       throw new Error('Image type error.');
     }
     this.image.name = this.image.filename.replace(/\.[^/.]+$/, '');

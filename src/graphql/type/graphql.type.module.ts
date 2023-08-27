@@ -58,6 +58,11 @@ applyInputTypesEnhanceMap({
       upsert: [ValidateNested()],
     },
   },
+  TypeUpdateToOneWithWhereWithoutItemsInput: {
+    fields: {
+      data: [ValidateNested()],
+    },
+  },
   TypeCreateOrConnectWithoutItemsInput: {
     fields: { create: [ValidateNested()] },
   },

@@ -44,6 +44,7 @@ describe('GraphqlErrorFormatter', () => {
             logger: LoggerService,
             errorFormatter: GraphqlErrorFormatter,
           ) => ({
+            validate: true,
             formatError: await errorFormatter.getFormatter(logger),
             context: (data) => data,
           }),
@@ -54,12 +55,25 @@ describe('GraphqlErrorFormatter', () => {
       providers: [TestResolver],
     }).compile();
 
+    // formatter = module.get<GraphqlErrorFormatter>(GraphqlErrorFormatter);
     logger = await module.resolve<LoggerService>(LoggerService);
     app = module.createNestApplication();
     await app.init();
   });
 
-  it('should not format error with non-validation error', () => {
+  it('should not format error without original error', () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .field('operations', `"query": "{ mutation { input } }"`)
+      .attach('file', Buffer.alloc(0))
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.errors).toBeArrayOfSize(1);
+        expect(res.body.errors[0].extensions?.code).toBe('BAD_REQUEST');
+      });
+  });
+
+  it('should not format error with original internal server error', () => {
     return request(app.getHttpServer())
       .post('/graphql')
       .send({ query: '{ error }' })
@@ -72,7 +86,7 @@ describe('GraphqlErrorFormatter', () => {
       });
   });
 
-  it('should format error with validation error', () => {
+  it('should not format error with original graphql validation error', () => {
     return request(app.getHttpServer())
       .post('/graphql')
       .send({ query: 'mutation { input }' })
@@ -80,8 +94,23 @@ describe('GraphqlErrorFormatter', () => {
       .expect((res) => {
         expect(res.body.errors).toBeArrayOfSize(1);
         expect(res.body.errors[0].extensions?.code).toBe(
-          'INTERNAL_SERVER_ERROR',
+          'GRAPHQL_VALIDATION_FAILED',
         );
+      });
+  });
+
+  it('should format error with validation bad user input error', () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: 'mutation Mutation($data: TestInput!) { input(data: $data) }',
+        operationName: 'Mutation',
+        variables: { data: { test: '' } },
+      })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.errors).toBeArrayOfSize(1);
+        expect(res.body.errors[0].extensions?.code).toBe('BAD_USER_INPUT');
       });
   });
 

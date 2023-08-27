@@ -78,11 +78,11 @@ const createEmptyType = { create: emptyType };
 const connectOrCreateEmptyType = {
   connectOrCreate: { where: validType, create: emptyType },
 };
-const deleteType = { delete: true };
-const updateType = { update: validType };
-const updateEmptyType = { update: emptyType };
-const upsertType = { create: validType, update: validType };
-const upsertEmptyType = { create: emptyType, update: emptyType };
+const deleteType = { delete: { name: { equals: 'type' } } };
+const updateType = { update: { data: validType } };
+const updateEmptyType = { update: { data: emptyType } };
+const upsertType = { create: validType, update: { data: validType } };
+const upsertEmptyType = { create: emptyType, update: { data: emptyType } };
 
 const getItemQueryTypeVars = (query: string, data: object, data2?: object) => {
   const itemData = { name: 'item', type: data };

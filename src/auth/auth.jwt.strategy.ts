@@ -12,7 +12,10 @@ export class AuthJwtStrategy extends PassportStrategy<Type<Strategy>>(
   Strategy,
   'jwt',
 ) {
-  constructor(private config: ConfigService, private logger: LoggerService) {
+  constructor(
+    private config: ConfigService,
+    private logger: LoggerService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,

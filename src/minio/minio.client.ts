@@ -9,7 +9,10 @@ export class MinioClient {
   protected readonly bucket: string;
   protected imagePath: string;
 
-  constructor(private config: ConfigService, protected logger: LoggerService) {
+  constructor(
+    private config: ConfigService,
+    protected logger: LoggerService,
+  ) {
     this.minioClient = new Client({
       port: Number(config.get<number>('MINIO_PORT')),
       endPoint: config.get<string>('MINIO_ENDPOINT'),

@@ -6,11 +6,16 @@ import {
 } from 'graphql-query-complexity';
 import * as depthLimit from 'graphql-depth-limit';
 //TODO Remove dependency apollo-server-plugin-base
+// import {
+// ApolloServerPlugin,
+// GraphQLRequestContext,
+// GraphQLRequestListener,
+// } from 'apollo-server-plugin-base';
 import {
   ApolloServerPlugin,
   GraphQLRequestContext,
   GraphQLRequestListener,
-} from 'apollo-server-plugin-base';
+} from '@apollo/server';
 import { GraphQLSchemaHost } from '@nestjs/graphql';
 import { Plugin } from '@nestjs/apollo';
 import { ConfigService } from '@nestjs/config';
@@ -23,8 +28,8 @@ export class GraphqlLimiterPlugin implements ApolloServerPlugin {
   ) {}
 
   async requestDidStart(
-    context: GraphQLRequestContext,
-  ): Promise<GraphQLRequestListener> {
+    requestContext: GraphQLRequestContext<object>,
+  ): Promise<GraphQLRequestListener<object>> {
     const { schema } = this.gqlSchemaHost;
 
     const maxDepth = this.config.get<number>('GRAPHQL_DEPTH_LIMIT');
@@ -59,7 +64,7 @@ export class GraphqlLimiterPlugin implements ApolloServerPlugin {
           );
         }
 
-        context.logger.info(
+        requestContext.logger.info(
           `GraphQL Depth:${depth} and Complexity:${complexity}`,
         );
 

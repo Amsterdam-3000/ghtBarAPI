@@ -37,7 +37,7 @@ describe('PrismaType', () => {
   });
 
   it('should not create duplicate', async () => {
-    // TODO - this is not working (prismock issue)
+    // TODO - @unique is not working (prismock issue)
     // await prisma.type.create({ data: { name: 'test' } });
     // await prisma.type.create({ data: { name: 'test' } });
   });
@@ -53,7 +53,25 @@ describe('PrismaType', () => {
     });
     expect(type).not.toBeNull();
     expect(type.items).toHaveLength(1);
-    expect(type.items[0].name).toBe('item');
+    expect(type.items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'item' })]),
+    );
+  });
+
+  it('should delete from item', async () => {
+    await prisma.type.create({ data: { name: 'type' } });
+    await prisma.item.create({
+      data: { name: 'item', type: { connect: { name: 'type' } } },
+    });
+    await prisma.type.delete({ where: { name: 'type' } });
+    const item = await prisma.item.findUnique({
+      where: { name: 'item' },
+      include: { type: true },
+    });
+    expect(item).not.toBeNull();
+    expect(item.type).toBeNull();
+    // TODO - relation deletion is not working (prismock issue)
+    // expect(item.typeId).toBeNull();
   });
 
   it('should log', async () => {

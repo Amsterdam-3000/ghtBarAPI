@@ -65,7 +65,7 @@ describe('Item', () => {
   });
 
   it('should not create duplicate', async () => {
-    // TODO - this is not working (prismock issue)
+    // TODO - @unique is not working (prismock issue)
     // await prisma.item.createMany({
     //   data: [ { name: '1' }, { name: '1' } ],
     // });
@@ -84,7 +84,7 @@ describe('Item', () => {
     expect(itemNew.id).toBe(itemOld.id);
     expect(itemNew.name).not.toBe(itemOld.name);
     expect(itemNew.createdAt).toBe(itemOld.createdAt);
-    // TODO - this is not working (prismock issue)
+    // TODO - @updateAt is not working (prismock issue)
     // expect(itemNew.updatedAt).not.toBeNull();
   });
 

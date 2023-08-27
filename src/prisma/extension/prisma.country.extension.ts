@@ -23,18 +23,16 @@ export const CountryImageComputation = (
         //TODO Remove this computation (Prisma extension has a bug with computed fields)
         $allModels: {
           $allOperations: async ({ args, query }) => {
-            if (args['select'] && args['select']['country']) {
-              const country = await query(args);
-              if (country['country'] || country['image']) return country;
+            const data = await query(args);
+            if (args['select']?.country && !data['country'] && !data['image']) {
               const flagImage = new ImageFlag(
                 config,
                 logger,
-                (country as Country).id,
+                (data as Country).id,
               );
-              country['image'] = flagImage.getImageUrls();
-              return country;
+              data['image'] = flagImage.getImageUrls();
             }
-            return query(args);
+            return data;
           },
         },
       },

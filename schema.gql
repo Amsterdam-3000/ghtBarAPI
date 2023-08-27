@@ -35,15 +35,27 @@ type AggregateUser {
 
 type Country {
   _count: CountryCount
+
+  """
+  Country emoji: unicode blocks of emoji (check https://emojipedia.org/flags/)
+  """
   emoji: String
+
+  """Country ID: country code (ISO 3166-1 alpha-2)"""
   id: String!
+
+  """Country flag: object is generated dynamically"""
   image: CountryImage
+
+  """Country items: all items from this country"""
   items(cursor: ItemWhereUniqueInput, distinct: [ItemScalarFieldEnum!], orderBy: [ItemOrderByWithRelationInput!], skip: Int, take: Int, where: ItemWhereInput): [Item!]!
+
+  """Country name: must be unique"""
   name: String!
 }
 
 type CountryCount {
-  items: Int!
+  items(where: ItemWhereInput): Int!
 }
 
 type CountryCountAggregate {
@@ -83,14 +95,30 @@ type CountryGroupBy {
   name: String!
 }
 
+"""Country image: object with links to flag images of the country"""
 type CountryImage {
+  """Link to the PNG image with 40px width"""
   urlPng40: String!
+
+  """Link to the PNG image with 80px width"""
   urlPng80: String!
+
+  """Link to the PNG image with 160px width"""
   urlPng160: String!
+
+  """Link to the PNG image with 320px width"""
   urlPng320: String!
+
+  """Link to the PNG image with 640px width"""
   urlPng640: String!
+
+  """Link to the PNG image with 1280px width"""
   urlPng1280: String!
+
+  """Link to the PNG image with 2560px width"""
   urlPng2560: String!
+
+  """Link to the SVG image"""
   urlSvg: String!
 }
 
@@ -116,6 +144,11 @@ input CountryMinOrderByAggregateInput {
   name: SortOrder
 }
 
+input CountryNullableRelationFilter {
+  is: CountryWhereInput
+  isNot: CountryWhereInput
+}
+
 input CountryOrderByWithAggregationInput {
   _count: CountryCountOrderByAggregateInput
   _max: CountryMaxOrderByAggregateInput
@@ -128,11 +161,6 @@ input CountryOrderByWithRelationInput {
   id: SortOrder
   items: ItemOrderByRelationAggregateInput
   name: SortOrder
-}
-
-input CountryRelationFilter {
-  is: CountryWhereInput
-  isNot: CountryWhereInput
 }
 
 enum CountryScalarFieldEnum {
@@ -153,10 +181,15 @@ input CountryUpdateOneWithoutItemsNestedInput {
   connect: CountryWhereUniqueInput
   connectOrCreate: CountryCreateOrConnectWithoutItemsInput
   create: CountryCreateWithoutItemsInput
-  delete: Boolean
-  disconnect: Boolean
-  update: CountryUpdateWithoutItemsInput
+  delete: CountryWhereInput
+  disconnect: CountryWhereInput
+  update: CountryUpdateToOneWithWhereWithoutItemsInput
   upsert: CountryUpsertWithoutItemsInput
+}
+
+input CountryUpdateToOneWithWhereWithoutItemsInput {
+  data: CountryUpdateWithoutItemsInput!
+  where: CountryWhereInput
 }
 
 input CountryUpdateWithoutItemsInput {
@@ -166,6 +199,7 @@ input CountryUpdateWithoutItemsInput {
 input CountryUpsertWithoutItemsInput {
   create: CountryCreateWithoutItemsInput!
   update: CountryUpdateWithoutItemsInput!
+  where: CountryWhereInput
 }
 
 input CountryWhereInput {
@@ -178,7 +212,11 @@ input CountryWhereInput {
 }
 
 input CountryWhereUniqueInput {
+  AND: [CountryWhereInput!]
+  NOT: [CountryWhereInput!]
+  OR: [CountryWhereInput!]
   id: String
+  items: ItemListRelationFilter
   name: String
 }
 
@@ -257,17 +295,42 @@ input FloatNullableWithAggregatesFilter {
 }
 
 type Item {
-  country: Country
+  """Country object: read from the Country model by id"""
+  country(where: CountryWhereInput): Country
+
+  """
+  Country ID: must be a countryId from the Country model (default value is "UN")
+  """
   countryId: String
+
+  """Creation date and time: generated on creation of item"""
   createdAt: DateTime!
+
+  """Item ID: generated on creation (UUID v4)"""
   id: String!
+
+  """Item image: object is generated dynamically"""
   image: ItemImage
+
+  """Bottle name: must be unique and not empty"""
   name: String!
+
+  """Bottle strength: must be between 0 and 100 and with 1 decimal"""
   strength: Float
-  type: Type
+
+  """Type object: read from the Type model by id"""
+  type(where: TypeWhereInput): Type
+
+  """Type ID: must be a typeId from the Type model (default value is "0")"""
   typeId: String
+
+  """Update date and time: changes every time the item is updated"""
   updatedAt: DateTime!
-  user: User
+
+  """User object: read from the User model by id"""
+  user(where: UserWhereInput): User
+
+  """User ID: must be a userId from the User model (default value is "0")"""
   userId: String
 }
 
@@ -331,14 +394,30 @@ type ItemGroupBy {
   userId: String
 }
 
+"""Item image: object with links to images of the item"""
 type ItemImage {
+  """Link to the original JPG image"""
   urlJpg: String!
+
+  """Link to the JPG image with 100px width"""
   urlJpg100: String!
+
+  """Link to the JPG image with 300px width"""
   urlJpg300: String!
+
+  """Link to the JPG image with 500px width"""
   urlJpg500: String!
+
+  """Link to the JPG image with 750px width"""
   urlJpg750: String!
+
+  """Link to the JPG image with 1000px width"""
   urlJpg1000: String!
+
+  """Link to the JPG image with 1500px width"""
   urlJpg1500: String!
+
+  """Link to the JPG image with 2500px width"""
   urlJpg2500: String!
 }
 
@@ -396,19 +475,19 @@ input ItemOrderByWithAggregationInput {
   _max: ItemMaxOrderByAggregateInput
   _min: ItemMinOrderByAggregateInput
   _sum: ItemSumOrderByAggregateInput
-  countryId: SortOrder
+  countryId: SortOrderInput
   createdAt: SortOrder
   name: SortOrder
-  strength: SortOrder
+  strength: SortOrderInput
   updatedAt: SortOrder
 }
 
 input ItemOrderByWithRelationInput {
   country: CountryOrderByWithRelationInput
-  countryId: SortOrder
+  countryId: SortOrderInput
   createdAt: SortOrder
   name: SortOrder
-  strength: SortOrder
+  strength: SortOrderInput
   type: TypeOrderByWithRelationInput
   updatedAt: SortOrder
   user: UserOrderByWithRelationInput
@@ -464,28 +543,62 @@ input ItemWhereInput {
   AND: [ItemWhereInput!]
   NOT: [ItemWhereInput!]
   OR: [ItemWhereInput!]
-  country: CountryRelationFilter
+  country: CountryNullableRelationFilter
   countryId: StringNullableFilter
   createdAt: DateTimeFilter
   id: StringFilter
   name: StringFilter
   strength: FloatNullableFilter
-  type: TypeRelationFilter
+  type: TypeNullableRelationFilter
   typeId: StringNullableFilter
   updatedAt: DateTimeFilter
-  user: UserRelationFilter
+  user: UserNullableRelationFilter
   userId: StringNullableFilter
 }
 
 input ItemWhereUniqueInput {
+  AND: [ItemWhereInput!]
+  NOT: [ItemWhereInput!]
+  OR: [ItemWhereInput!]
+  country: CountryNullableRelationFilter
+  countryId: StringNullableFilter
+  createdAt: DateTimeFilter
   id: String
   name: String
+  strength: FloatNullableFilter
+  type: TypeNullableRelationFilter
+  typeId: StringNullableFilter
+  updatedAt: DateTimeFilter
+  user: UserNullableRelationFilter
+  userId: StringNullableFilter
 }
 
 type Mutation {
-  createManyItem(data: [ItemCreateManyInput!]!, skipDuplicates: Boolean, uploadImages: [Upload!]): AffectedRowsOutput!
+  """
+  Extending the generated createManyItem mutation with a field for uploading images
+  """
+  createManyItem(
+    data: [ItemCreateManyInput!]!
+    skipDuplicates: Boolean
+
+    """
+    Image upload objects: when sending files in the request, it must be filled with [null, null] (filled out on the server, check https://github.com/jaydenseric/graphql-multipart-request-spec)
+    """
+    uploadImages: [Upload!]
+  ): AffectedRowsOutput!
   createManyType(data: [TypeCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
-  createOneItem(data: ItemCreateInput!, uploadImage: Upload): Item!
+
+  """
+  Extending the generated createOneItem mutation with a field for uploading an image
+  """
+  createOneItem(
+    data: ItemCreateInput!
+
+    """
+    Image upload object: when sending a file in the request, it must be filled with null (filled out on the server, check https://github.com/jaydenseric/graphql-multipart-request-spec)
+    """
+    uploadImage: Upload
+  ): Item!
   createOneType(data: TypeCreateInput!): Type!
   createOneUser(data: UserCreateInput!): User!
   deleteManyItem(where: ItemWhereInput): AffectedRowsOutput!
@@ -497,10 +610,41 @@ type Mutation {
   updateManyItem(data: ItemUpdateManyMutationInput!, where: ItemWhereInput): AffectedRowsOutput!
   updateManyType(data: TypeUpdateManyMutationInput!, where: TypeWhereInput): AffectedRowsOutput!
   updateManyUser(data: UserUpdateManyMutationInput!, where: UserWhereInput): AffectedRowsOutput!
-  updateOneItem(data: ItemUpdateInput!, deleteImage: Boolean, uploadImage: Upload, where: ItemWhereUniqueInput!): Item!
+
+  """
+  Extending the generated updateOneItem mutation with fields for uploading or deleting an image
+  """
+  updateOneItem(
+    data: ItemUpdateInput!
+
+    """Image deletion flag: cannot be set at the same time as uploadImage"""
+    deleteImage: Boolean
+
+    """
+    Image upload object: when sending a file in the request, it must be filled with null (filled out on the server, check https://github.com/jaydenseric/graphql-multipart-request-spec)
+    """
+    uploadImage: Upload
+    where: ItemWhereUniqueInput!
+  ): Item!
   updateOneType(data: TypeUpdateInput!, where: TypeWhereUniqueInput!): Type
   updateOneUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  upsertOneItem(create: ItemCreateInput!, deleteImage: Boolean, update: ItemUpdateInput!, uploadImage: Upload, where: ItemWhereUniqueInput!): Item!
+
+  """
+  Extending the generated upsertOneItem mutation with a fields for uploading or deleting an image
+  """
+  upsertOneItem(
+    create: ItemCreateInput!
+
+    """Image deletion flag: cannot be set at the same time as uploadImage"""
+    deleteImage: Boolean
+    update: ItemUpdateInput!
+
+    """
+    Image upload object: when sending a file in the request, it must be filled with null (filled out on the server, check https://github.com/jaydenseric/graphql-multipart-request-spec)
+    """
+    uploadImage: Upload
+    where: ItemWhereUniqueInput!
+  ): Item!
   upsertOneType(create: TypeCreateInput!, update: TypeUpdateInput!, where: TypeWhereUniqueInput!): Type!
 }
 
@@ -657,6 +801,11 @@ input NestedStringWithAggregatesFilter {
   startsWith: String
 }
 
+enum NullsOrder {
+  first
+  last
+}
+
 type Query {
   aggregateCountry(cursor: CountryWhereUniqueInput, orderBy: [CountryOrderByWithRelationInput!], skip: Int, take: Int, where: CountryWhereInput): AggregateCountry!
   aggregateItem(cursor: ItemWhereUniqueInput, orderBy: [ItemOrderByWithRelationInput!], skip: Int, take: Int, where: ItemWhereInput): AggregateItem!
@@ -680,7 +829,7 @@ type Query {
   users(cursor: UserWhereUniqueInput, distinct: [UserScalarFieldEnum!], orderBy: [UserOrderByWithRelationInput!], skip: Int, take: Int, where: UserWhereInput): [User!]!
 }
 
-"""User roles"""
+"""User roles: for authorization (USER, ADMIN)"""
 enum Role {
   ADMIN
   USER
@@ -689,6 +838,11 @@ enum Role {
 enum SortOrder {
   asc
   desc
+}
+
+input SortOrderInput {
+  nulls: NullsOrder
+  sort: SortOrder!
 }
 
 input StringFilter {
@@ -755,13 +909,19 @@ input StringWithAggregatesFilter {
 
 type Type {
   _count: TypeCount
+
+  """Type ID: generated on creation (UUID v4)"""
   id: String!
+
+  """Type items: all items with this type"""
   items(cursor: ItemWhereUniqueInput, distinct: [ItemScalarFieldEnum!], orderBy: [ItemOrderByWithRelationInput!], skip: Int, take: Int, where: ItemWhereInput): [Item!]!
+
+  """Type of alcohol: must be unique and not empty"""
   name: String!
 }
 
 type TypeCount {
-  items: Int!
+  items(where: ItemWhereInput): Int!
 }
 
 type TypeCountAggregate {
@@ -823,6 +983,11 @@ input TypeMinOrderByAggregateInput {
   name: SortOrder
 }
 
+input TypeNullableRelationFilter {
+  is: TypeWhereInput
+  isNot: TypeWhereInput
+}
+
 input TypeOrderByWithAggregationInput {
   _count: TypeCountOrderByAggregateInput
   _max: TypeMaxOrderByAggregateInput
@@ -833,11 +998,6 @@ input TypeOrderByWithAggregationInput {
 input TypeOrderByWithRelationInput {
   items: ItemOrderByRelationAggregateInput
   name: SortOrder
-}
-
-input TypeRelationFilter {
-  is: TypeWhereInput
-  isNot: TypeWhereInput
 }
 
 enum TypeScalarFieldEnum {
@@ -865,10 +1025,15 @@ input TypeUpdateOneWithoutItemsNestedInput {
   connect: TypeWhereUniqueInput
   connectOrCreate: TypeCreateOrConnectWithoutItemsInput
   create: TypeCreateWithoutItemsInput
-  delete: Boolean
-  disconnect: Boolean
-  update: TypeUpdateWithoutItemsInput
+  delete: TypeWhereInput
+  disconnect: TypeWhereInput
+  update: TypeUpdateToOneWithWhereWithoutItemsInput
   upsert: TypeUpsertWithoutItemsInput
+}
+
+input TypeUpdateToOneWithWhereWithoutItemsInput {
+  data: TypeUpdateWithoutItemsInput!
+  where: TypeWhereInput
 }
 
 input TypeUpdateWithoutItemsInput {
@@ -878,6 +1043,7 @@ input TypeUpdateWithoutItemsInput {
 input TypeUpsertWithoutItemsInput {
   create: TypeCreateWithoutItemsInput!
   update: TypeUpdateWithoutItemsInput!
+  where: TypeWhereInput
 }
 
 input TypeWhereInput {
@@ -890,7 +1056,11 @@ input TypeWhereInput {
 }
 
 input TypeWhereUniqueInput {
+  AND: [TypeWhereInput!]
+  NOT: [TypeWhereInput!]
+  OR: [TypeWhereInput!]
   id: String
+  items: ItemListRelationFilter
   name: String
 }
 
@@ -899,19 +1069,33 @@ scalar Upload
 
 type User {
   _count: UserCount
+
+  """Creation date and time: generated on creation of user"""
   createdAt: DateTime!
+
+  """
+  User email: must be unique and a valid email (check isEmail() on https://github.com/validatorjs/validator.js#validators)
+  """
   email: String!
 
-  """User ID (UUID v4)"""
+  """User ID: generated on creation (UUID v4)"""
   id: String!
+
+  """User items: all items for this user"""
   items(cursor: ItemWhereUniqueInput, distinct: [ItemScalarFieldEnum!], orderBy: [ItemOrderByWithRelationInput!], skip: Int, take: Int, where: ItemWhereInput): [Item!]!
+
+  """User name: must be unique and between 4 and 20 characters"""
   name: String!
+
+  """User role: new users are set to "USER" by default"""
   role: Role!
+
+  """Update date and time: changes every time the user is updated"""
   updatedAt: DateTime!
 }
 
 type UserCount {
-  items: Int!
+  items(where: ItemWhereInput): Int!
 }
 
 type UserCountAggregate {
@@ -1005,6 +1189,11 @@ input UserMinOrderByAggregateInput {
   updatedAt: SortOrder
 }
 
+input UserNullableRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
 input UserOrderByWithAggregationInput {
   _count: UserCountOrderByAggregateInput
   _max: UserMaxOrderByAggregateInput
@@ -1023,11 +1212,6 @@ input UserOrderByWithRelationInput {
   name: SortOrder
   role: SortOrder
   updatedAt: SortOrder
-}
-
-input UserRelationFilter {
-  is: UserWhereInput
-  isNot: UserWhereInput
 }
 
 enum UserScalarFieldEnum {
@@ -1068,10 +1252,15 @@ input UserUpdateOneWithoutItemsNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutItemsInput
   create: UserCreateWithoutItemsInput
-  delete: Boolean
-  disconnect: Boolean
-  update: UserUpdateWithoutItemsInput
+  delete: UserWhereInput
+  disconnect: UserWhereInput
+  update: UserUpdateToOneWithWhereWithoutItemsInput
   upsert: UserUpsertWithoutItemsInput
+}
+
+input UserUpdateToOneWithWhereWithoutItemsInput {
+  data: UserUpdateWithoutItemsInput!
+  where: UserWhereInput
 }
 
 input UserUpdateWithoutItemsInput {
@@ -1083,6 +1272,7 @@ input UserUpdateWithoutItemsInput {
 input UserUpsertWithoutItemsInput {
   create: UserCreateWithoutItemsInput!
   update: UserUpdateWithoutItemsInput!
+  where: UserWhereInput
 }
 
 input UserWhereInput {
@@ -1099,7 +1289,14 @@ input UserWhereInput {
 }
 
 input UserWhereUniqueInput {
+  AND: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  createdAt: DateTimeFilter
   email: String
   id: String
+  items: ItemListRelationFilter
   name: String
+  role: EnumRoleFilter
+  updatedAt: DateTimeFilter
 }

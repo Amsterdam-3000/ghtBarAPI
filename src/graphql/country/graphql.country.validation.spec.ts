@@ -40,9 +40,12 @@ const createCountry = { create: country };
 const connectOrCreateCountry = {
   connectOrCreate: { where: country, create: country },
 };
-const deleteCountry = { delete: true };
-const updateCountry = { update: { name: 'country' } };
-const upsertCountry = { create: country, update: { name: 'country' } };
+const deleteCountry = { delete: { name: { equals: 'country' } } };
+const updateCountry = { update: { data: { name: 'country' } } };
+const upsertCountry = {
+  create: country,
+  update: { data: { name: 'country' } },
+};
 
 const getItemQueryCountryVars = (
   query: string,

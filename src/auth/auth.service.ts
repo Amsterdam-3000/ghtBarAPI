@@ -6,7 +6,10 @@ import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService, private logger: LoggerService) {
+  constructor(
+    private jwtService: JwtService,
+    private logger: LoggerService,
+  ) {
     this.logger.setContext(AuthService.name);
   }
 

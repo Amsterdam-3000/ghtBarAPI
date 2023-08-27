@@ -1,12 +1,12 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 generator typegraphql {
   provider                  = "typegraphql-prisma"
   useSimpleInputs           = true
-  omitInputFieldsByDefault  = "emoji"
-  omitOutputFieldsByDefault = "password"
+  omitInputFieldsByDefault  = ["emoji"]
+  omitOutputFieldsByDefault = ["password"]
 }
 
 datasource db {
@@ -14,63 +14,89 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// User roles
+/// User roles: for authorization (USER, ADMIN)
 enum Role {
+  /// User role: can read all entities, can update and delete own user
   USER
+  /// Admin role: can CRUD all entities except CUD Country
   ADMIN
 }
 
 model User {
-  /// User ID (UUID v4)
+  /// User ID: generated on creation (UUID v4)
   /// @TypeGraphQL.omit(input: ["create", "update", "orderBy"])
   id        String   @id @default(uuid()) @map("_id")
-  /// @TypeGraphQL.field(description: "name")
+  /// User name: must be unique and between 4 and 20 characters
   name      String   @unique
+  /// User email: must be unique and a valid email (check isEmail() on https://github.com/validatorjs/validator.js#validators)
   email     String   @unique
+  /// User password: must be a strong password (check isStrongPassword() on https://github.com/validatorjs/validator.js#validators)
   /// @TypeGraphQL.omit(input: ["where", "orderBy"])
   password  String
+  /// User role: new users are set to "USER" by default
   /// @TypeGraphQL.omit(input: ["create", "update"])
   role      Role     @default(USER)
+  /// Creation date and time: generated on creation of user
   /// @TypeGraphQL.omit(input: ["create", "update"])
   createdAt DateTime @default(now())
+  /// Update date and time: changes every time the user is updated
   /// @TypeGraphQL.omit(input: ["create", "update"])
   updatedAt DateTime @updatedAt
+  /// User items: all items for this user
   /// @TypeGraphQL.omit(input: ["create", "update"])
   items     Item[]
 }
 
 model Country {
+  /// Country ID: country code (ISO 3166-1 alpha-2)
   /// @TypeGraphQL.omit(input: ["update"])
   id    String  @id @map("_id")
+  /// Country name: must be unique
   name  String  @unique
+  /// Country emoji: unicode blocks of emoji (check https://emojipedia.org/flags/)
   emoji String?
+  /// Country items: all items from this country
   /// @TypeGraphQL.omit(input: ["create", "update"])
   items Item[]
 }
 
 model Type {
+  /// Type ID: generated on creation (UUID v4)
   /// @TypeGraphQL.omit(input: ["create", "update", "orderBy"])
   id    String @id @default(uuid()) @map("_id")
+  /// Type of alcohol: must be unique and not empty
   name  String @unique
+  /// Type items: all items with this type
   /// @TypeGraphQL.omit(input: ["create", "update"])
   items Item[]
 }
 
 model Item {
+  /// Item ID: generated on creation (UUID v4)
   /// @TypeGraphQL.omit(input: ["create", "update", "orderBy"])
   id        String   @id @default(uuid()) @map("_id")
+  /// Bottle name: must be unique and not empty
   name      String   @unique
+  /// Bottle strength: must be between 0 and 100 and with 1 decimal
   strength  Float?   @default(0)
+  /// Type ID: must be a typeId from the Type model (default value is "0")
   /// @TypeGraphQL.omit(input: ["orderBy"])
   typeId    String?  @default("0")
+  /// Type object: read from the Type model by id
   type      Type?    @relation(fields: [typeId], references: [id])
+  /// Country ID: must be a countryId from the Country model (default value is "UN")
   countryId String?  @default("UN")
+  /// Country object: read from the Country model by id
   country   Country? @relation(fields: [countryId], references: [id])
+  /// User ID: must be a userId from the User model (default value is "0")
   /// @TypeGraphQL.omit(input: ["orderBy"])
   userId    String?  @default("0")
+  /// User object: read from the User model by id
   user      User?    @relation(fields: [userId], references: [id])
+  /// Creation date and time: generated on creation of item
   /// @TypeGraphQL.omit(input: ["create", "update"])
   createdAt DateTime @default(now())
+  /// Update date and time: changes every time the item is updated
   /// @TypeGraphQL.omit(input: ["create", "update"])
   updatedAt DateTime @updatedAt
 }

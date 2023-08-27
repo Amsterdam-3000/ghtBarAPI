@@ -3,12 +3,12 @@ import { minioConfig } from './minio.mock';
 import { ConfigService } from '@nestjs/config';
 
 import { LoggerServiceMock } from '../logger/logger.mock';
-import { ImageUpload } from '../image/image.upload';
+import { IImageUpload, ImageUpload } from '../image/image.upload';
 import { MinioClient as MinioClientOrigin } from './minio.client';
 
 jest.mock('../image/image.upload', () => ({
-  ImageUpload: jest.fn<Partial<ImageUpload>, [ImageUpload]>((upload) => ({
-    stream: upload.stream,
+  ImageUpload: jest.fn<Partial<ImageUpload>, [IImageUpload]>((upload) => ({
+    stream: upload.createReadStream && upload.createReadStream(),
     mimetype: upload.mimetype,
     filename: upload.filename,
   })),
@@ -58,7 +58,11 @@ describe('MinioClient', () => {
       minioClient = new MinioClient(config, logger);
       bucket = minioClient.getBucket();
       upload1 = new ImageUpload(
-        { filename: 'filename1', mimetype: 'mimetype1', stream: 'stream1' },
+        {
+          filename: 'filename1',
+          mimetype: 'mimetype1',
+          createReadStream: () => 'stream1',
+        },
         logger,
       );
       upload2 = new ImageUpload({ filename: 'filename2' }, logger);

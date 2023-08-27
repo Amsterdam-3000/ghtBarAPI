@@ -6,7 +6,10 @@ import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class AuthJwtGuard extends AuthGuard('jwt') {
-  constructor(options: AuthModuleOptions, private logger: LoggerService) {
+  constructor(
+    options: AuthModuleOptions,
+    private logger: LoggerService,
+  ) {
     super(options);
     this.logger.setContext(AuthJwtGuard.name);
   }

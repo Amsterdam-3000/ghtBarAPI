@@ -42,7 +42,7 @@ describe('PrismaCountry', () => {
   });
 
   it('should not create duplicate', async () => {
-    // TODO - this is not working (prismock issue)
+    // TODO - @unique is not working (prismock issue)
     // await prisma.country.create({ data: { id: 'ID', name: 'test1' } });
     // await prisma.country.create({ data: { id: 'ID', name: 'test2' } });
   });
@@ -58,7 +58,25 @@ describe('PrismaCountry', () => {
     });
     expect(country).not.toBeNull();
     expect(country.items).toHaveLength(1);
-    expect(country.items[0].name).toBe('item');
+    expect(country.items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'item' })]),
+    );
+  });
+
+  it('should delete from item', async () => {
+    await prisma.country.create({ data: { id: '1', name: 'country' } });
+    await prisma.item.create({
+      data: { name: 'item', country: { connect: { name: 'country' } } },
+    });
+    await prisma.country.delete({ where: { name: 'country' } });
+    const item = await prisma.item.findUnique({
+      where: { name: 'item' },
+      include: { country: true },
+    });
+    expect(item).not.toBeNull();
+    expect(item.country).toBeNull();
+    // TODO - relation deletion is not working (prismock issue)
+    // expect(item.countryId).toBeNull();
   });
 
   it('should log', async () => {

@@ -1,6 +1,7 @@
 import { MiddlewareInterface, NextFn, ResolverData } from 'type-graphql';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { GraphQLResolveInfoWithCacheControl } from '@apollo/cache-control-types';
 
 import { IAppContext } from '../../app/app.model';
 import { LoggerService } from '../../logger/logger.service';
@@ -9,7 +10,10 @@ import { LoggerService } from '../../logger/logger.service';
 export class GraphqlCacheMiddleware
   implements MiddlewareInterface<IAppContext>
 {
-  constructor(private logger: LoggerService, private config: ConfigService) {
+  constructor(
+    private logger: LoggerService,
+    private config: ConfigService,
+  ) {
     this.logger.setContext(GraphqlCacheMiddleware.name);
   }
 
@@ -24,7 +28,9 @@ export class GraphqlCacheMiddleware
         `${LoggerService.gqlToStr(data)}: cacheMaxAge(${cacheMaxAge}s) is set`,
       );
 
-    data.info.cacheControl.setCacheHint({ maxAge: cacheMaxAge });
+    (data.info as GraphQLResolveInfoWithCacheControl).cacheControl.setCacheHint(
+      { maxAge: cacheMaxAge },
+    );
     return next();
   }
 }

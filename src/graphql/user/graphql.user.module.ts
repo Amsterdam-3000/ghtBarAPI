@@ -73,7 +73,11 @@ applyInputTypesEnhanceMap({
       delete: [IsEmpty()],
     },
   },
-
+  UserUpdateToOneWithWhereWithoutItemsInput: {
+    fields: {
+      data: [IsEmpty()],
+    },
+  },
   UserCreateInput: fieldsValidation,
   UserUpdateInput: fieldsValidation,
   UserUpdateManyMutationInput: fieldsValidation,

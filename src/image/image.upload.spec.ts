@@ -6,14 +6,16 @@ import { ImageUpload } from './image.upload';
 //Test experimental features for ESM modules
 jest.unstable_mockModule('file-type', async () => {
   return {
-    fileTypeFromStream: jest.fn<(string) => Promise<{ mime: string }>>(
-      async (stream) => {
-        if (!stream) throw new Error();
-        return {
-          mime: stream,
-        };
-      },
-    ),
+    fileTypeFromStream: jest.fn<
+      (stream: string) => Promise<{ mime: string } | object>
+    >(async (stream) => {
+      if (!stream) throw new Error();
+      return stream === 'empty'
+        ? {}
+        : {
+            mime: stream,
+          };
+    }),
   };
 });
 
@@ -44,6 +46,13 @@ describe('ImageUpload', () => {
       { createReadStream: () => 'text/css' },
       logger,
     );
+    await expect(upload.uploadOrThrow()).rejects.toMatchObject({
+      message: 'Image type error.',
+    });
+  });
+
+  it('should throw error if upload has no mimetype', async () => {
+    const upload = new ImageUpload({ createReadStream: () => 'empty' }, logger);
     await expect(upload.uploadOrThrow()).rejects.toMatchObject({
       message: 'Image type error.',
     });

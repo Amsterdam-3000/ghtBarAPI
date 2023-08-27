@@ -29,7 +29,10 @@ import { IAppContext } from '../../app/app.model';
 
 @Resolver(() => Item)
 export class ComputeFieldsItemResolver {
-  @FieldResolver(() => ItemImage, { nullable: true })
+  @FieldResolver(() => ItemImage, {
+    nullable: true,
+    description: 'Item image: object is generated dynamically',
+  })
   image(@Root() item: Item & { image: ItemImage }): ItemImage {
     return item.image;
   }
@@ -39,7 +42,11 @@ export class ComputeFieldsItemResolver {
 @Resolver()
 export class CreateOneItemAndUploadOneImageResolver extends CreateOneItemResolver {
   @Authorized('ADMIN')
-  @Mutation(() => Item, { nullable: false })
+  @Mutation(() => Item, {
+    nullable: false,
+    description:
+      'Extending the generated createOneItem mutation with a field for uploading an image',
+  })
   async createOneItem(
     @Ctx() ctx: IAppContext,
     @Info() info: GraphQLResolveInfo,
@@ -55,7 +62,11 @@ export class CreateOneItemAndUploadOneImageResolver extends CreateOneItemResolve
 @Resolver()
 export class CreateManyItemAndUploadManyImageResolver extends CreateManyItemResolver {
   @Authorized('ADMIN')
-  @Mutation(() => AffectedRowsOutput, { nullable: false })
+  @Mutation(() => AffectedRowsOutput, {
+    nullable: false,
+    description:
+      'Extending the generated createManyItem mutation with a field for uploading images',
+  })
   async createManyItem(
     @Ctx() ctx: IAppContext,
     @Info() info: GraphQLResolveInfo,
@@ -71,7 +82,11 @@ export class CreateManyItemAndUploadManyImageResolver extends CreateManyItemReso
 @Resolver()
 export class UpdateOneItemAndUploadOneImageResolver extends UpdateOneItemResolver {
   @Authorized('ADMIN')
-  @Mutation(() => Item, { nullable: false })
+  @Mutation(() => Item, {
+    nullable: false,
+    description:
+      'Extending the generated updateOneItem mutation with fields for uploading or deleting an image',
+  })
   async updateOneItem(
     @Ctx() ctx: IAppContext,
     @Info() info: GraphQLResolveInfo,
@@ -87,7 +102,11 @@ export class UpdateOneItemAndUploadOneImageResolver extends UpdateOneItemResolve
 @Resolver()
 export class UpsertOneItemAndUploadOneImageResolver extends UpsertOneItemResolver {
   @Authorized('ADMIN')
-  @Mutation(() => Item, { nullable: false })
+  @Mutation(() => Item, {
+    nullable: false,
+    description:
+      'Extending the generated upsertOneItem mutation with a fields for uploading or deleting an image',
+  })
   async upsertOneItem(
     @Ctx() ctx: IAppContext,
     @Info() info: GraphQLResolveInfo,

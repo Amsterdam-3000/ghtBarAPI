@@ -26,6 +26,11 @@ applyInputTypesEnhanceMap({
       delete: [IsEmpty()],
     },
   },
+  CountryUpdateToOneWithWhereWithoutItemsInput: {
+    fields: {
+      data: [IsEmpty()],
+    },
+  },
 });
 
 @Module({

@@ -57,7 +57,7 @@ describe('PrismaUser', () => {
   });
 
   it('should not create duplicate', async () => {
-    // TODO - this is not working (prismock issue)
+    // TODO - @unique is not working (prismock issue)
     // await prisma.user.createMany({
     //   data: [
     //     { name: '1', email: '1', password: '1' },
@@ -79,7 +79,7 @@ describe('PrismaUser', () => {
     expect(userNew.id).toBe(userOld.id);
     expect(userNew.name).not.toBe(userOld.name);
     expect(userNew.createdAt).toBe(userOld.createdAt);
-    // TODO - this is not working (prismock issue)
+    // TODO - @updateAt is not working (prismock issue)
     // expect(userNew.updatedAt).not.toBeNull();
   });
 
@@ -96,7 +96,27 @@ describe('PrismaUser', () => {
     });
     expect(user).not.toBeNull();
     expect(user.items).toHaveLength(1);
-    expect(user.items[0].name).toBe('item');
+    expect(user.items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'item' })]),
+    );
+  });
+
+  it('should delete from item', async () => {
+    await prisma.user.create({
+      data: { name: '1', email: '1', password: '1' },
+    });
+    await prisma.item.create({
+      data: { name: 'item', user: { connect: { name: '1' } } },
+    });
+    await prisma.user.delete({ where: { name: '1' } });
+    const item = await prisma.item.findUnique({
+      where: { name: 'item' },
+      include: { user: true },
+    });
+    expect(item).not.toBeNull();
+    expect(item.user).toBeNull();
+    // TODO - relation deletion is not working (prismock issue)
+    // expect(item.userId).toBeNull();
   });
 
   it('should log', async () => {

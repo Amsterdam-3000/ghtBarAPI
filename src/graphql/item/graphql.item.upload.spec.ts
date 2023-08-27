@@ -69,7 +69,7 @@ const csrfMessage =
   'This operation has been blocked as a potential Cross-Site Request Forgery (CSRF).';
 const fileMissingMessage = 'File missing in the request.';
 const invalidImageMessage = 'Upload value invalid.';
-const invalidBooleanMessage = 'Boolean cannot represent a non boolean value:';
+const invalidBooleanMessage = 'Boolean cannot represent a non boolean value';
 
 const expectValidationError = (message: string) => (res: request.Response) => {
   expect(res.body.errors).toBeArray();

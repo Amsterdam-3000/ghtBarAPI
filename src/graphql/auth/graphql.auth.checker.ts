@@ -95,10 +95,8 @@ export class GraphqlAuthChecker implements AuthCheckerInterface<IAppContext> {
       );
 
     for (const role of roles) {
-      switch (role) {
-        case 'AGENT_USER':
-          if (data.context.req.useragent.isBot) return false;
-      }
+      if (role === 'AGENT_USER' && data.context.req.useragent.isBot)
+        return false;
     }
     return true;
   };
