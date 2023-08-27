@@ -14,14 +14,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// User roles: for authorization (USER, ADMIN)
-enum Role {
-  /// User role: can read all entities, can update and delete own user
-  USER
-  /// Admin role: can CRUD all entities except CUD Country
-  ADMIN
-}
-
 model User {
   /// User ID: generated on creation (UUID v4)
   /// @TypeGraphQL.omit(input: ["create", "update", "orderBy"])
