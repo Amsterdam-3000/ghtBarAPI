@@ -1,5 +1,4 @@
 name: 'ght-bar'
-version: '1.0'
 services:
   api:
     container_name: '${COMPOSE_PROJECT_NAME}-api'
@@ -10,7 +9,7 @@ services:
         port: '${PORT}'
     restart: always
     env_file:
-      - .env
+      - .env.1
     ports:
       - '127.0.0.1:4000:${PORT}'
     networks:
