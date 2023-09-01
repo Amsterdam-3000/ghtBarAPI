@@ -22,4 +22,4 @@ jobs:
           remote_docker_host: ${{ vars.HOST }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
-          args: up -d
+          args: -p ght-bar up -d
