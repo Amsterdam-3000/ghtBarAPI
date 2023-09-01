@@ -12,10 +12,9 @@ jobs:
       - name: Create .env
         env:
           VARS_JSON: ${{ toJSON(vars) }}
-          SECRET_JSON: ${{ toJSON(secrets) }}
         run: |
           echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
-#          echo "$SECRET_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
+          echo "${{ toJSON(secrets) }}" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
       - name: Start Deployment without copy
         uses: wshihadeh/docker-deployment-action@v2
         with:
