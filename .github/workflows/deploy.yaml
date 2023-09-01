@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Create .env
-        env:
-          VARS_JSON: ${{ toJSON(vars) }}
-          SECRET_JSON: ${{ toJSON(secrets) }}
-        run: |
-          echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
-          echo "$SECRET_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
+#      - name: Create .env
+#        env:
+#          VARS_JSON: ${{ toJSON(vars) }}
+#          SECRET_JSON: ${{ toJSON(secrets) }}
+#        run: |
+#          echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
+#          echo "$SECRET_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
       - name: Start Deployment without copy
         uses: wshihadeh/docker-deployment-action@master
         with:
