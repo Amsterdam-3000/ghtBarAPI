@@ -17,7 +17,7 @@ jobs:
           echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
 #          echo "$SECRET_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
       - name: Start Deployment without copy
-        uses: wshihadeh/docker-deployment-action@master
+        uses: wshihadeh/docker-deployment-action@v2
         with:
           remote_docker_host: ${{ vars.HOST }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
