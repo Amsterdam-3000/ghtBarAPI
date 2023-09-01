@@ -1,13 +1,12 @@
 import { BucketItemStat, Client, ClientOptions } from 'minio';
 
 export const minioConfig = {
-  MINIO_PORT: 1,
-  MINIO_ENDPOINT: 'endpoint',
-  MINIO_ACCESS_KEY: 'access',
-  MINIO_SECRET_KEY: 'secret',
-  MINIO_USE_SSL: false,
-  MINIO_BUCKET: 'bucket',
-  MINIO_PATH_IMAGE: 'path/%id',
+  S3_PORT: 1,
+  S3_HOST: 'endpoint',
+  S3_ROOT_USER: 'access',
+  S3_ROOT_PASSWORD: 'secret',
+  S3_BUCKET: 'bucket',
+  S3_PATH_IMAGE: 'path/%id',
 };
 
 jest.mock('minio', () => ({
@@ -17,11 +16,10 @@ jest.mock('minio', () => ({
       let files: any[] = [];
 
       if (
-        options.port !== minioConfig.MINIO_PORT ||
-        options.endPoint !== minioConfig.MINIO_ENDPOINT ||
-        options.accessKey !== minioConfig.MINIO_ACCESS_KEY ||
-        options.secretKey !== minioConfig.MINIO_SECRET_KEY ||
-        options.useSSL !== minioConfig.MINIO_USE_SSL
+        options.port !== minioConfig.S3_PORT ||
+        options.endPoint !== minioConfig.S3_HOST ||
+        options.accessKey !== minioConfig.S3_ROOT_USER ||
+        options.secretKey !== minioConfig.S3_ROOT_PASSWORD
       ) {
         throw new Error();
       }

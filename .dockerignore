@@ -1,0 +1,16 @@
+node_modules
+dist
+coverage
+.idea
+.github
+.run
+httprequests
+jsmigrations
+
+npm-debug.log
+ght-bar.drawio
+sonar-project.properties
+Dockerfile
+.dockerignore
+docker-compose.yaml
+.gitignore

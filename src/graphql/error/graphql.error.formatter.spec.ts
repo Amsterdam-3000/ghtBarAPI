@@ -46,7 +46,7 @@ describe('GraphqlErrorFormatter', () => {
           ) => ({
             validate: true,
             formatError: await errorFormatter.getFormatter(logger),
-            context: (data) => data,
+            context: (data: object) => data,
           }),
           imports: [LoggerModuleMock, GraphqlErrorModule],
           inject: [LoggerService, GraphqlErrorFormatter],
@@ -114,7 +114,7 @@ describe('GraphqlErrorFormatter', () => {
       });
   });
 
-  it('should not call formatter without errors', () => {
+  it('should not call formatter without errors', async () => {
     jest.clearAllMocks();
     return request(app.getHttpServer())
       .post('/graphql')
@@ -130,7 +130,7 @@ describe('GraphqlErrorFormatter', () => {
       });
   });
 
-  it('should be logged with non-validation error', () => {
+  it('should be logged with non-validation error', async () => {
     jest.clearAllMocks();
     return request(app.getHttpServer())
       .post('/graphql')
@@ -140,7 +140,7 @@ describe('GraphqlErrorFormatter', () => {
       });
   });
 
-  it('should be logged with validation error', () => {
+  it('should be logged with validation error', async () => {
     jest.clearAllMocks();
     return request(app.getHttpServer())
       .post('/graphql')

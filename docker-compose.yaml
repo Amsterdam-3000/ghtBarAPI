@@ -1,0 +1,76 @@
+name: 'ght-bar'
+version: '1.0'
+services:
+  api:
+    container_name: '${COMPOSE_PROJECT_NAME}-api'
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        port: '${PORT}'
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '127.0.0.1:4000:${PORT}'
+    networks:
+      - db-tier
+      - s3-tier
+    depends_on:
+      - db
+      - s3
+  db:
+    container_name: '${COMPOSE_PROJECT_NAME}-db'
+    image: mysql:8.1
+    restart: always
+    environment:
+      MYSQL_DATABASE: '${DB_NAME}'
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+    ports:
+      - '127.0.0.1:4001:3306'
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - db-tier
+  s3:
+    container_name: '${COMPOSE_PROJECT_NAME}-s3'
+    image: minio/minio
+    restart: always
+    environment:
+      MINIO_ROOT_USER: '${S3_ROOT_USER}'
+      MINIO_ROOT_PASSWORD: '${S3_ROOT_PASSWORD}'
+    command: 'server /data'
+    ports:
+      - '127.0.0.1:4002:9000'
+    volumes:
+      - s3-data:/data
+    networks:
+      - s3-tier
+  imgproxy:
+    container_name: '${COMPOSE_PROJECT_NAME}-imgproxy'
+    image: darthsim/imgproxy:v3
+    restart: always
+    environment:
+      IMGPROXY_KEY: '${IMGPROXY_KEY}'
+      IMGPROXY_SALT: '${IMGPROXY_SALT}'
+      IMGPROXY_USE_S3: true
+      IMGPROXY_S3_ENDPOINT: 'http://s3:9000'
+      AWS_ACCESS_KEY_ID: '${S3_ROOT_USER}'
+      AWS_SECRET_ACCESS_KEY: '${S3_ROOT_PASSWORD}'
+      IMGPROXY_FALLBACK_IMAGE_URL: 's3://${S3_BUCKET}/${S3_FOLDER_IMAGES}/0'
+    ports:
+      - '127.0.0.1:4003:8080'
+    networks:
+      - s3-tier
+    depends_on:
+      - s3
+volumes:
+  db-data:
+    name: '${COMPOSE_PROJECT_NAME}-db-data'
+  s3-data:
+    name: '${COMPOSE_PROJECT_NAME}-s3-data'
+networks:
+  db-tier:
+    name: '${COMPOSE_PROJECT_NAME}-db-tier'
+  s3-tier:
+    name: '${COMPOSE_PROJECT_NAME}-s3-tier'

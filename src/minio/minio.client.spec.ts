@@ -40,8 +40,8 @@ describe('MinioClient', () => {
     it('should minioService has right config', async () => {
       const config = new ConfigService({ ...minioConfig });
       const minioService = new MinioClient(config, logger);
-      expect(minioService.getBucket()).toBe(minioConfig.MINIO_BUCKET);
-      expect(minioService.getPath()).toBe(minioConfig.MINIO_PATH_IMAGE);
+      expect(minioService.getBucket()).toBe(minioConfig.S3_BUCKET);
+      expect(minioService.getPath()).toBe(minioConfig.S3_PATH_IMAGE);
     });
   });
 

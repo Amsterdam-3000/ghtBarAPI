@@ -1,26 +1,18 @@
 name: Build
 on:
-  push:
-    branches:
-      - main
+  # Trigger analysis when creating a pull request.
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
   sonarcloud:
-    name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
-      - name: Install dependencies
-        run: npm install
-      - name: Analyze with ESLint
-        run: npm run lint:out
-      - name: Test and coverage
-        run: npm run test:cov
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: sonarsource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

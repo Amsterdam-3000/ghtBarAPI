@@ -5,35 +5,31 @@ export const configSchema = Joi.object({
     .valid('development', 'production', 'test')
     .default('development'),
 
-  PORT: Joi.number().min(1024).max(49151).default(3000),
+  HOST: Joi.string().hostname().required(),
+  PORT: Joi.number().port().default(3000),
 
+  DB_ROOT_PASSWORD: Joi.string().alphanum().min(8).required(),
+  DB_NAME: Joi.string()
+    .pattern(/^[a-z0-9-.]+$/)
+    .min(3)
+    .max(63)
+    .required(),
   DATABASE_URL: Joi.string()
     .uri({ scheme: /postgresql|mysql|sqlserver/ })
     .required(),
 
-  APOLLO_SERVER_INTROSPECTION: Joi.boolean().default(false),
-  APOLLO_SERVER_ERROR_STACKTRACE: Joi.boolean().default(false),
-
-  JWT_SECRET: Joi.string().alphanum().required(),
-  JWT_EXPIRES_IN: Joi.string().required(),
-
-  FLAG_CDN_URL: Joi.string()
-    .uri({ scheme: /https?/ })
-    .pattern(/%width.+%id\.%ext$/)
-    .required(),
-
-  MINIO_ENDPOINT: Joi.string().hostname().required(),
-  MINIO_PORT: Joi.number().min(1024).max(49151).default(9000),
-  MINIO_ACCESS_KEY: Joi.string().alphanum().required(),
-  MINIO_SECRET_KEY: Joi.string().alphanum().required(),
-  MINIO_USE_SSL: Joi.boolean().default(false),
-  MINIO_BUCKET: Joi.string()
+  S3_HOST: Joi.string().hostname().required(),
+  S3_PORT: Joi.number().port().default(9000),
+  S3_ROOT_USER: Joi.string().alphanum().min(4).default('root'),
+  S3_ROOT_PASSWORD: Joi.string().alphanum().min(8).required(),
+  S3_BUCKET: Joi.string()
     .lowercase()
     .pattern(/^[a-z0-9-.]+$/)
     .min(3)
     .max(63)
     .required(),
-  MINIO_PATH_IMAGE: Joi.string()
+  S3_FOLDER_IMAGES: Joi.string().alphanum().min(3).max(63).default('images'),
+  S3_PATH_IMAGE: Joi.string()
     .uri({ relativeOnly: true })
     .pattern(/%id$/)
     .required(),
@@ -48,6 +44,17 @@ export const configSchema = Joi.object({
     .required(),
   IMGPROXY_KEY: Joi.string().hex().length(64).required(),
   IMGPROXY_SALT: Joi.string().hex().length(64).required(),
+
+  APOLLO_SERVER_INTROSPECTION: Joi.boolean().default(false),
+  APOLLO_SERVER_ERROR_STACKTRACE: Joi.boolean().default(false),
+
+  JWT_SECRET: Joi.string().alphanum().required(),
+  JWT_EXPIRES_IN: Joi.string().required(),
+
+  FLAG_CDN_URL: Joi.string()
+    .uri({ scheme: /https?/ })
+    .pattern(/%width.+%id\.%ext$/)
+    .required(),
 
   THROTTLER_TTL: Joi.number().min(0).default(60),
   THROTTLER_LIMIT: Joi.number().min(0).default(60),

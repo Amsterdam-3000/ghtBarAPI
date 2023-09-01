@@ -14,14 +14,13 @@ export class MinioClient {
     protected logger: LoggerService,
   ) {
     this.minioClient = new Client({
-      port: Number(config.get<number>('MINIO_PORT')),
-      endPoint: config.get<string>('MINIO_ENDPOINT'),
-      accessKey: config.get<string>('MINIO_ACCESS_KEY'),
-      secretKey: config.get<string>('MINIO_SECRET_KEY'),
-      useSSL: config.get<boolean>('MINIO_USE_SSL') === true,
+      port: Number(config.get<number>('S3_PORT')),
+      endPoint: config.get<string>('S3_HOST'),
+      accessKey: config.get<string>('S3_ROOT_USER'),
+      secretKey: config.get<string>('S3_ROOT_PASSWORD'),
     });
-    this.bucket = config.get<string>('MINIO_BUCKET');
-    this.imagePath = config.get<string>('MINIO_PATH_IMAGE');
+    this.bucket = config.get<string>('S3_BUCKET');
+    this.imagePath = config.get<string>('S3_PATH_IMAGE');
   }
 
   public putImage = async (uploadImage: ImageUpload) => {
