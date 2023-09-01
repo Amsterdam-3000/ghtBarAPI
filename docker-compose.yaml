@@ -1,4 +1,4 @@
-name: 'ght-bar'
+name: ght-bar
 services:
   api:
     container_name: '${COMPOSE_PROJECT_NAME}-api'
