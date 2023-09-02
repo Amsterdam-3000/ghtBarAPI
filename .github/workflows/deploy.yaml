@@ -13,7 +13,7 @@ jobs:
         uses: shine1594/secrets-to-env-action@master
         with:
           secrets: ${{ toJSON(secrets) }}
-          secrets_env: production
+          secrets_env: all
       - name: Show .env
         run: cat .env
       - name: Add variables .env
