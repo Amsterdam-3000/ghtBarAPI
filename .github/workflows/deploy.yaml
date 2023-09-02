@@ -13,7 +13,7 @@ jobs:
         env:
           VARS_JSON: ${{ toJSON(vars) }}
         run: |
-          echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\"\(.[$k])\""' >> .env
+          echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\'\(.[$k])\'"' >> .env
           echo "DB_ROOT_PASSWORD=\"${{ secrets.DB_ROOT_PASSWORD }}\"" >> .env
           echo "S3_ROOT_PASSWORD=\"${{ secrets.S3_ROOT_PASSWORD }}\"" >> .env
           echo "IMGPROXY_KEY=\"${{ secrets.IMGPROXY_KEY }}\"" >> .env
