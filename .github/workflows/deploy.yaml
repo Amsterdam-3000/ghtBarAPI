@@ -9,23 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Add secrets to .env
-        uses: shine1594/secrets-to-env-action@master
-        with:
-          secrets: ${{ toJSON(secrets) }}
-          secrets_env: all
-      - name: Show .env
-        run: cat .env
-      - name: Add variables .env
+      - name: Add variables and secrets to .env
         env:
           VARS_JSON: ${{ toJSON(vars) }}
         run: |
           echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
-#          echo DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }} >> .env
-#          echo S3_ROOT_PASSWORD=${{ secrets.S3_ROOT_PASSWORD }} >> .env
-#          echo IMGPROXY_KEY=${{ secrets.IMGPROXY_KEY }} >> .env
-#          echo IMGPROXY_SALT=${{ secrets.IMGPROXY_SALT }} >> .env
-#          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }} >> .env
+          echo S3_ROOT_PASSWORD=${{ secrets.S3_ROOT_PASSWORD }} >> .env
+          echo IMGPROXY_KEY=${{ secrets.IMGPROXY_KEY }} >> .env
+          echo IMGPROXY_SALT=${{ secrets.IMGPROXY_SALT }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
       - name: Replace variables in .env
         uses: falnyr/replace-env-vars-action@master
         env:
