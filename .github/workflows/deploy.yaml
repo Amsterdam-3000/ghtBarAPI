@@ -9,6 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm install
+      - name: Run test
+        run: npm run test
       - name: Add variables and secrets to .env
         env:
           VARS_JSON: ${{ toJSON(vars) }}
@@ -29,9 +37,13 @@ jobs:
           S3_PATH_IMAGE: ${{ vars.S3_PATH_IMAGE }}
         with:
           filename: .env
-      - name: Show .env
-        run: cat .env
-      - name: Start Deployment without copy
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+      - name: Apply all pending migrations to the database
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+      - name: Start Deployment to host
         uses: wshihadeh/docker-deployment-action@v2
         with:
           remote_docker_host: ${{ format('{0}@{1}', vars.USER, vars.HOST) }}
