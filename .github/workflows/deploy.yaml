@@ -13,12 +13,12 @@ jobs:
         env:
           VARS_JSON: ${{ toJSON(vars) }}
         run: |
-          echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\'\(.[$k])\'"' >> .env
-          echo "DB_ROOT_PASSWORD=\"${{ secrets.DB_ROOT_PASSWORD }}\"" >> .env
-          echo "S3_ROOT_PASSWORD=\"${{ secrets.S3_ROOT_PASSWORD }}\"" >> .env
-          echo "IMGPROXY_KEY=\"${{ secrets.IMGPROXY_KEY }}\"" >> .env
-          echo "IMGPROXY_SALT=\"${{ secrets.IMGPROXY_SALT }}\"" >> .env
-          echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
+          echo "$VARS_JSON" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
+          echo DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }} >> .env
+          echo S3_ROOT_PASSWORD=${{ secrets.S3_ROOT_PASSWORD }} >> .env
+          echo IMGPROXY_KEY=${{ secrets.IMGPROXY_KEY }} >> .env
+          echo IMGPROXY_SALT=${{ secrets.IMGPROXY_SALT }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }}\"" >> .env
       - name: Show .env
         run: cat .env
       - name: Start Deployment without copy
