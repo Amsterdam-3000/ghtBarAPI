@@ -38,7 +38,7 @@ services:
     environment:
       MINIO_ROOT_USER: '${S3_ROOT_USER}'
       MINIO_ROOT_PASSWORD: '${S3_ROOT_PASSWORD}'
-    command: 'server /data --default-authentication-plugin=mysql_native_password'
+    command: 'server /data'
     ports:
       - '127.0.0.1:4002:9000'
     volumes:
