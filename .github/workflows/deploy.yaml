@@ -14,6 +14,8 @@ jobs:
         with:
           secrets: ${{ toJSON(secrets) }}
           secrets_env: production
+      - name: Show .env
+        run: cat .env
       - name: Add variables .env
         env:
           VARS_JSON: ${{ toJSON(vars) }}
