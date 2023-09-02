@@ -37,13 +37,7 @@ jobs:
           S3_PATH_IMAGE: ${{ vars.S3_PATH_IMAGE }}
         with:
           filename: .env
-      - name: Load .env file
-        uses: xom9ikk/dotenv@v2
-#      - name: Apply all pending migrations to the database
-#        run: npx prisma migrate deploy
-#        env:
-#          DATABASE_URL: ${{ env.DATABASE_URL }}
-      - name: Start Deployment to host
+      - name: Deploy to host
         uses: wshihadeh/docker-deployment-action@v2
         with:
           remote_docker_host: ${{ format('{0}@{1}', vars.USER, vars.HOST) }}
