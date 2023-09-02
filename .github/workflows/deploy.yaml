@@ -20,7 +20,7 @@ jobs:
 #          echo IMGPROXY_SALT=${{ secrets.IMGPROXY_SALT }} >> .env
 #          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
       - name: Show .env
-        run: echo .env
+        run: cat .env
       - name: Start Deployment without copy
         uses: wshihadeh/docker-deployment-action@v2
         with:
