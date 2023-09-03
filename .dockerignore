@@ -5,7 +5,6 @@ coverage
 .github
 .run
 httprequests
-jsmigrations
 
 npm-debug.log
 ght-bar.drawio

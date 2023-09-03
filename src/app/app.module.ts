@@ -15,7 +15,10 @@ import { configSchema } from '../config/config.schema';
 @Module({
   imports: [
     LoggerModule,
-    ConfigModule.forRoot({ isGlobal: true, validationSchema: configSchema }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: configSchema,
+    }),
     ThrottlerModule,
     AuthModule,
     GraphqlModule,
