@@ -6,7 +6,7 @@
     "dist",
     "**/*spec.ts",
     "**/*mock.ts",
-    "jsmigrations",
+    "prisma/jsmigrations",
     "httprequests"
   ]
 }

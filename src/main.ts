@@ -3,7 +3,7 @@ import * as useragent from 'express-useragent';
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './app/app.module';
 import { LoggerService } from './logger/logger.service';
@@ -11,9 +11,6 @@ import { extendPrisma, initPrisma } from './prisma/prisma';
 import { MinioClient } from './minio/minio.client';
 
 async function bootstrap() {
-  await ConfigModule.envVariablesLoaded;
-  console.log(process.env);
-
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
   const logger = new LoggerService('Main');
